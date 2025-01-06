@@ -4,6 +4,10 @@
 
 This project sets up a multi-language content delivery infrastructure using AWS services. The infrastructure includes S3 buckets for storing English and Spanish content, CloudFront for content delivery, and Lambda functions for dynamic request handling. The project is managed using Terraform, which automates the provisioning and configuration of the AWS resources.
 
+## Architecture Diagram
+
+![AWS Translate Pipeline](aws_translate_pipeline.png)
+
 ## Project Structure
 
 - **infrastructure.tf**: Defines the AWS infrastructure, including S3 buckets, CloudFront distribution, IAM policies, and Lambda functions.
