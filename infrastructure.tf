@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "spanish-bucket" {
 # Upload HTML file to the English bucket
 resource "aws_s3_object" "en_html_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
-  key          = "index.html"                        # Specify the object key
+  key          = "index.html"                        # Specify the object key with the correct path
   source       = "backup/index.html"                 # Path to the source file
   content_type = "text/html"                         # Set the content type
 }
@@ -28,7 +28,7 @@ resource "aws_s3_object" "en_html_upload" {
 # Upload CSS file to the English bucket
 resource "aws_s3_object" "en_css_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
-  key          = "index.css"                         # Specify the object key
+  key          = "index.css"                         # Specify the object key with the correct path
   source       = "backup/index.css"                  # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
@@ -36,7 +36,7 @@ resource "aws_s3_object" "en_css_upload" {
 # Upload HTML file to the Spanish bucket
 resource "aws_s3_object" "es_html_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
-  key          = "index.html"                        # Specify the object key
+  key          = "index.html"                        # Specify the object key with the correct path
   source       = "backup/index.html"                 # Path to the source file
   content_type = "text/html"                         # Set the content type
 }
@@ -44,7 +44,7 @@ resource "aws_s3_object" "es_html_upload" {
 # Upload CSS file to the Spanish bucket
 resource "aws_s3_object" "es_css_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
-  key          = "index.css"                     # Specify the object key
+  key          = "index.css"                         # Specify the object key with the correct path
   source       = "backup/index.css"                  # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
@@ -213,6 +213,59 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
   policy_arn = aws_iam_policy.iam_policy_for_lambda.arn # Reference the IAM policy
 }
 
+# Define the IAM role for Lambda execution
+resource "aws_iam_role" "lambda_execution_role" {
+  name = "lambda_execution_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      },
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "edgelambda.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# Define the IAM policy for Lambda to access the S3 bucket
+resource "aws_iam_policy" "lambda_s3_policy" {
+  name        = "lambda_s3_policy"
+  description = "IAM policy for Lambda to access S3 bucket"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-spanish-assets-bucket",
+          "arn:aws:s3:::my-spanish-assets-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Attach the IAM policy to the Lambda execution role
+resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
+  role       = aws_iam_role.lambda_execution_role.name
+  policy_arn = aws_iam_policy.lambda_s3_policy.arn
+}
+
 # Create a zip archive of the Lambda function code
 data "archive_file" "zip_the_python_code" {
   type        = "zip"                              # Specify the archive type
@@ -224,7 +277,7 @@ data "archive_file" "zip_the_python_code" {
 resource "aws_lambda_function" "terraform_lambda_func" {
   filename      = "${path.module}/lambda/lambda.zip"                             # Path to the zip file
   function_name = "origin-function"                                              # Name of the Lambda function
-  role          = aws_iam_role.lambda_role.arn                                   # ARN of the IAM role
+  role          = aws_iam_role.lambda_execution_role.arn                         # ARN of the IAM role
   handler       = "lambda.handler"                                               # Handler function
   runtime       = "python3.12"                                                   # Runtime environment
   depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role] # Ensure IAM policy is attached before creating the function
