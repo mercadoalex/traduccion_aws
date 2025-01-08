@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "spanish-bucket" {
 resource "aws_s3_object" "en_html_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
   key          = "index.html"                        # Specify the object key with the correct path
-  source       = "backup/index.html"                 # Path to the source file
+  source       = "cv/index.html"                 # Path to the source file
   content_type = "text/html"                         # Set the content type
 }
 
@@ -29,7 +29,7 @@ resource "aws_s3_object" "en_html_upload" {
 resource "aws_s3_object" "en_css_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
   key          = "index.css"                         # Specify the object key with the correct path
-  source       = "backup/index.css"                  # Path to the source file
+  source       = "cv/index.css"                  # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
 
@@ -37,7 +37,7 @@ resource "aws_s3_object" "en_css_upload" {
 resource "aws_s3_object" "es_html_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
   key          = "index.html"                        # Specify the object key with the correct path
-  source       = "backup/index.html"                 # Path to the source file
+  source       = "cv/index.html"                 # Path to the source file
   content_type = "text/html"                         # Set the content type
 }
 
@@ -45,7 +45,7 @@ resource "aws_s3_object" "es_html_upload" {
 resource "aws_s3_object" "es_css_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
   key          = "index.css"                         # Specify the object key with the correct path
-  source       = "backup/index.css"                  # Path to the source file
+  source       = "cv/index.css"                  # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
 #AWS CloudFront Origin Access Control (OAC) resource
