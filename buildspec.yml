@@ -1,24 +1,10 @@
-version: 0.2  # Specifies the version of the build specification format
+version: 0.2  # Specifies the version of the buildspec file format
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.8  # Specifies the Python runtime version to use
-  pre_build:
-    commands:
-      - echo Pre-build phase...  # Example command to run during the pre-build phase
   build:
     commands:
-      - echo Build phase...  # Example command to run during the build phase
-      - python app/translate.py  # Run the translate.py script located in the app directory
-  post_build:
-    commands:
-      - echo Post-build phase...  # Example command to run during the post-build phase
-
-artifacts:
-  files:
-    - app/index.html  # Include the index.html file from the app directory in the build artifacts
-    - app/index.css  # Include the index.css file from the app directory in the build artifacts
-    - site/index.html  # Include the index.html file from the site directory in the build artifacts
-    - site/index.css  # Include the index.css file from the site directory in the build artifacts
-    - lambda/lambda.zip  # Include the lambda.zip file from the lambda directory in the build artifacts
+      - ls  # List the files in the current directory for debugging purposes
+      - aws s3 sync . s3://my-english-assets-bucket  # Sync the current directory to the English S3 bucket
+      - aws s3 sync . s3://my-spanish-assets-bucket  # Sync the current directory to the Spanish S3 bucket
+      - python translate.py en es index.html  # Run the translation script to translate index.html from English to Spanish
+      - aws s3 cp es-index.html s3://my-spanish-assets-bucket/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
