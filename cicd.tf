@@ -61,31 +61,52 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   force_destroy = true # Allow Terraform to delete the bucket and its contents
 }
 
-# IAM role for CodePipeline
+# IAM role for CodePipeline with necessary permissions to use CodeStar connection
 resource "aws_iam_role" "codepipeline_role" {
-  name               = "codepipeline_role"
-  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  name = "codepipeline_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "codepipeline.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
 }
 
-# IAM policy document for CodePipeline
-data "aws_iam_policy_document" "assume_role" {
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["codepipeline.amazonaws.com"]
-    }
-
-    actions = ["sts:AssumeRole"]
-  }
-}
-
-# IAM policy for CodePipeline
+# IAM policy for CodePipeline to use CodeStar connection and other necessary permissions
 resource "aws_iam_role_policy" "codepipeline_policy" {
-  name   = "codepipeline_policy"
-  role   = aws_iam_role.codepipeline_role.id
-  policy = data.aws_iam_policy_document.codepipeline_policy.json
+  name = "codepipeline_policy"
+  role = aws_iam_role.codepipeline_role.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "codestar-connections:UseConnection",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "codebuild:StartBuild",
+          "codebuild:BatchGetBuilds"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:PassRole"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
 }
 
 # IAM policy document for CodePipeline
