@@ -40,13 +40,13 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Build" # Name of the stage
 
     action {
-      name             = "Build"           # Name of the action
-      category         = "Build"           # Category of the action (Build in this case)
-      owner            = "AWS"             # Owner of the action (AWS in this case)
-      provider         = "CodeBuild"       # Provider of the action (CodeBuild in this case)
-      version          = "1"               # Version of the action
-      input_artifacts  = ["source_output"] # Input artifacts for the action
-      output_artifacts = ["build_output"]  # Output artifacts from the action
+      name             = "Build"                   # Name of the action
+      category         = "Build"                   # Category of the action (Build in this case)
+      owner            = "AWS"                     # Owner of the action (AWS in this case)
+      provider         = "CodeBuild"               # Provider of the action (CodeBuild in this case)
+      version          = "1"                       # Version of the action
+      input_artifacts  = ["source_output"]         # Input artifacts for the action
+      output_artifacts = ["build_output"]          # Output artifacts from the action
 
       configuration = {
         ProjectName = aws_codebuild_project.codebuild_project.name # Name of the CodeBuild project
@@ -224,7 +224,9 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "arn:aws:s3:::my-english-assets-bucket",
           "arn:aws:s3:::my-english-assets-bucket/*",
           "arn:aws:s3:::my-spanish-assets-bucket",
-          "arn:aws:s3:::my-spanish-assets-bucket/*"
+          "arn:aws:s3:::my-spanish-assets-bucket/*",
+          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1",
+          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1/*"
         ]
       },
       {
