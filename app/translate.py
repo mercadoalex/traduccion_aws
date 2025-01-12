@@ -12,6 +12,18 @@ def translate_text(text, source_language, target_language):
     )
     return result['TranslatedText']
 
+def split_text(text, max_size=10000):
+    """Splits the text into chunks of max_size bytes."""
+    chunks = []
+    while len(text.encode('utf-8')) > max_size:
+        split_index = max_size
+        while len(text[:split_index].encode('utf-8')) > max_size:
+            split_index -= 1
+        chunks.append(text[:split_index])
+        text = text[split_index:]
+    chunks.append(text)
+    return chunks
+
 def main():
     parser = argparse.ArgumentParser(description='Translate a document.')
     parser.add_argument('source_language', type=str, help='Source language code')
@@ -23,8 +35,13 @@ def main():
     with open(args.file_path, 'r', encoding='utf-8') as file:
         text = file.read()
 
-    # Translate the text
-    translated_text = translate_text(text, args.source_language, args.target_language)
+    # Split the text into chunks
+    text_chunks = split_text(text)
+
+    # Translate each chunk and concatenate the results
+    translated_text = ""
+    for chunk in text_chunks:
+        translated_text += translate_text(chunk, args.source_language, args.target_language)
 
     # Write the translated text to a new file
     output_file_path = f"translated-{args.file_path}"
