@@ -33,45 +33,6 @@ resource "aws_s3_bucket_public_access_block" "spanish_bucket_public_access_block
   restrict_public_buckets = false
 }
 
-# Attach the policy to the English assets bucket
-resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
-  bucket = aws_s3_bucket.english-bucket.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = "*",
-        Action = [
-          "s3:GetObject"
-        ],
-        Resource = [
-          "arn:aws:s3:::my-english-assets-bucket1/*"
-        ]
-      }
-    ]
-  })
-}
-
-# Attach the policy to the Spanish assets bucket
-resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
-  bucket = aws_s3_bucket.spanish-bucket.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = "*",
-        Action = [
-          "s3:GetObject"
-        ],
-        Resource = [
-          "arn:aws:s3:::my-spanish-assets-bucket1/*"
-        ]
-      }
-    ]
-  })
-}
 
 # Upload HTML file to the English bucket
 resource "aws_s3_object" "en_html_upload" {
