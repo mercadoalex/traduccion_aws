@@ -15,6 +15,12 @@ resource "aws_s3_bucket" "spanish-bucket" {
   bucket        = var.es_bucket_name # Use the bucket name from variables
   force_destroy = true               # Allow Terraform to delete the bucket and its contents
 
+  # Disable Block Public Access settings
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+
 }
 
 # Upload HTML file to the English bucket
@@ -142,6 +148,7 @@ resource "aws_s3_bucket_policy" "spanish-policy" {
   bucket = aws_s3_bucket.spanish-bucket.id
   policy = data.aws_iam_policy_document.cloudfront_oac_access_spanish.json
 }
+
 # defines an IAM policy document that grants CloudFront access to objects in an S3 bucket
 data "aws_iam_policy_document" "cloudfront_oac_access_spanish" {
   statement {

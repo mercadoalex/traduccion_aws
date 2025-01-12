@@ -262,19 +262,11 @@ resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
     Statement = [
       {
         Effect = "Allow",
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
-        },
+        Principal = "*",
         Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket",
-          "s3:ListBucketVersions",
-          "s3:GetBucketLocation",
-          "s3:GetObjectVersion"
+          "s3:GetObject"
         ],
         Resource = [
-          "arn:aws:s3:::my-english-assets-bucket1",
           "arn:aws:s3:::my-english-assets-bucket1/*"
         ]
       }
@@ -291,48 +283,11 @@ resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
       {
         Effect = "Allow",
         Principal = "*",
-        #{
-          #AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
-        #},
         Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket",
-          "s3:ListBucketVersions",
-          "s3:GetBucketLocation",
-          "s3:GetObjectVersion"
+          "s3:GetObject"
         ],
         Resource = [
-          "arn:aws:s3:::my-spanish-assets-bucket1",
           "arn:aws:s3:::my-spanish-assets-bucket1/*"
-        ]
-      }
-    ]
-  })
-}
-
-# Attach the policy to the CodePipeline artifacts bucket
-resource "aws_s3_bucket_policy" "codepipeline_artifacts_bucket_policy" {
-  bucket = "my-codepipeline-us-east-1-bucket1"
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
-        },
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket",
-          "s3:ListBucketVersions",
-          "s3:GetBucketLocation",
-          "s3:GetObjectVersion"
-        ],
-        Resource = [
-          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1",
-          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1/*"
         ]
       }
     ]
