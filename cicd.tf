@@ -290,9 +290,10 @@ resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
     Statement = [
       {
         Effect = "Allow",
-        Principal = {
-          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
-        },
+        Principal = "*",
+        #{
+          #AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
+        #},
         Action = [
           "s3:GetObject",
           "s3:PutObject",
