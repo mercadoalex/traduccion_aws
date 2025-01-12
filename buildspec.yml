@@ -6,6 +6,7 @@ phases:
       python: 3.8  # Specify the Python version to use
     commands:
       - echo Installing dependencies  # Print a message indicating the installation of dependencies
+      - /root/.pyenv/versions/3.8.16/bin/python3.8 -m pip install --upgrade pip  # Upgrade pip to the latest version
       - pip install -r requirements.txt  # Install dependencies listed in requirements.txt
 
   pre_build:

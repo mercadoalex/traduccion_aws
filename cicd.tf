@@ -69,10 +69,10 @@ resource "aws_codebuild_project" "codebuild_project" {
 
   # Define the environment for the CodeBuild project
   environment {
-    compute_type                = "BUILD_GENERAL1_SMALL" # Compute type for the build environment
-    image                       = "aws/codebuild/standard:4.0" # Docker image for the build environment
-    type                        = "LINUX_CONTAINER" # Type of build environment
-    privileged_mode             = true # Enable privileged mode for the build environment
+    compute_type    = "BUILD_GENERAL1_SMALL"       # Compute type for the build environment
+    image           = "aws/codebuild/standard:4.0" # Docker image for the build environment
+    type            = "LINUX_CONTAINER"            # Type of build environment
+    privileged_mode = true                         # Enable privileged mode for the build environment
     environment_variable {
       name  = "ENV_VAR"
       value = "value"
@@ -181,13 +181,13 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Build" # Name of the stage
 
     action {
-      name             = "Build"                   # Name of the action
-      category         = "Build"                   # Category of the action (Build in this case)
-      owner            = "AWS"                     # Owner of the action (AWS in this case)
-      provider         = "CodeBuild"               # Provider of the action (CodeBuild in this case)
-      version          = "1"                       # Version of the action
-      input_artifacts  = ["source_output"]         # Input artifacts for the action
-      output_artifacts = ["build_output"]          # Output artifacts from the action
+      name             = "Build"           # Name of the action
+      category         = "Build"           # Category of the action (Build in this case)
+      owner            = "AWS"             # Owner of the action (AWS in this case)
+      provider         = "CodeBuild"       # Provider of the action (CodeBuild in this case)
+      version          = "1"               # Version of the action
+      input_artifacts  = ["source_output"] # Input artifacts for the action
+      output_artifacts = ["build_output"]  # Output artifacts from the action
 
       configuration = {
         ProjectName = aws_codebuild_project.codebuild_project.name # Name of the CodeBuild project
