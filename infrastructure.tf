@@ -45,8 +45,8 @@ resource "aws_s3_object" "en_html_upload" {
 # Upload CSS file to the English bucket
 resource "aws_s3_object" "en_css_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
-  key          = "styles.css"                        # Specify the object key with the correct path
-  source       = "cv/styles.css"                     # Path to the source file
+  key          = "index.css"                        # Specify the object key with the correct path
+  source       = "cv/index.css"                     # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
 
