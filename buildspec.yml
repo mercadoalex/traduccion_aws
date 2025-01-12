@@ -7,7 +7,7 @@ phases:
     commands:
       - echo Installing dependencies  # Print a message indicating the installation of dependencies
       - /root/.pyenv/versions/3.8.16/bin/python3.8 -m pip install --upgrade pip  # Upgrade pip to the latest version
-      - pip install -r requirements.txt  # Install dependencies listed in requirements.txt
+      - pip install -r app/requirements.txt  # Install dependencies listed in requirements.txt
 
   pre_build:
     commands:
@@ -15,7 +15,7 @@ phases:
 
   build:
     commands:
-      - ls  # List the files in the current directory for debugging purposes
+      - ls app  # List the files in the app directory for debugging purposes
       - python app/translate.py en es app/index.html  # Run the translation script to translate index.html from English to Spanish
       - aws s3 cp app/es-index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
 
