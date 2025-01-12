@@ -49,10 +49,12 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = ["build_output"]  # Output artifacts from the action
 
       configuration = {
-        ProjectName = aws_codebuild_project.build_project.name # Name of the CodeBuild project
+        ProjectName = aws_codebuild_project.codebuild_project.name # Name of the CodeBuild project
       }
     }
   }
+
+  # Additional stages (e.g., Deploy) can be defined here
 }
 
 # Create an S3 bucket for CodePipeline artifacts
@@ -151,25 +153,36 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 }
 
 # Create a CodeBuild project
-resource "aws_codebuild_project" "build_project" {
-  name         = "my-build-project"
-  description  = "CodeBuild project for building the application"
-  service_role = aws_iam_role.codebuild_service_role.arn # ARN of the IAM role for CodeBuild
+resource "aws_codebuild_project" "codebuild_project" {
+  name          = "codebuild-project"
+  description   = "CodeBuild project for building the application"
+  build_timeout = "5" # Build timeout in minutes
 
-  artifacts {
-    type = "CODEPIPELINE" # Use CodePipeline as the artifact store
-  }
-
-  environment {
-    compute_type = "BUILD_GENERAL1_SMALL"       # Compute type for the build environment
-    image        = "aws/codebuild/standard:4.0" # Docker image for the build environment
-    type         = "LINUX_CONTAINER"            # Type of build environment
-  }
-
+  # Define the source for the CodeBuild project
   source {
     type      = "CODEPIPELINE"  # Use CodePipeline as the source
     buildspec = "buildspec.yml" # Path to the buildspec file
   }
+
+  # Define the environment for the CodeBuild project
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL" # Compute type for the build environment
+    image                       = "aws/codebuild/standard:4.0" # Docker image for the build environment
+    type                        = "LINUX_CONTAINER" # Type of build environment
+    privileged_mode             = true # Enable privileged mode for the build environment
+    environment_variable {
+      name  = "ENV_VAR"
+      value = "value"
+    }
+  }
+
+  # Define the artifacts for the CodeBuild project
+  artifacts {
+    type = "CODEPIPELINE" # Use CodePipeline for artifacts
+  }
+
+  # Define the service role for the CodeBuild project
+  service_role = aws_iam_role.codebuild_service_role.arn # ARN of the IAM role for CodeBuild
 }
 
 # IAM role for CodeBuild
@@ -190,7 +203,7 @@ resource "aws_iam_role" "codebuild_service_role" {
   })
 }
 
-# IAM policy for CodeBuild
+# IAM policy for CodeBuild with S3 permissions
 resource "aws_iam_role_policy" "codebuild_policy" {
   name = "codebuild_policy"
   role = aws_iam_role.codebuild_service_role.id
@@ -202,11 +215,16 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         Action = [
           "s3:GetObject",
           "s3:PutObject",
-          "s3:ListBucket"
+          "s3:ListBucket",
+          "s3:ListBucketVersions",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion"
         ],
         Resource = [
-          aws_s3_bucket.codepipeline_bucket.arn,
-          "${aws_s3_bucket.codepipeline_bucket.arn}/*"
+          "arn:aws:s3:::my-english-assets-bucket",
+          "arn:aws:s3:::my-english-assets-bucket/*",
+          "arn:aws:s3:::my-spanish-assets-bucket",
+          "arn:aws:s3:::my-spanish-assets-bucket/*"
         ]
       },
       {
