@@ -1,174 +1,264 @@
-		/* Styling the body */
-		body {
-			margin: 0;
-			padding: 0;
-		}
+/* Fonts */
 
-		/* Styling section, giving background
-			image and dimensions */
-		section {
-			width: 100%;
-			height: 100vh;
-			background:
-                url(
-'https://plus.unsplash.com/premium_photo-1681487469745-91d1d8a5836b?q=80&w=3570&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-                );
-			background-size: cover;
-		}
-
-		/* Styling the left floating section */
-		section .leftBox {
-			width: 50%;
-			height: 100%;
-			float: left;
-			padding: 50px;
-			box-sizing: border-box;
-		}
-
-		/* Styling the background of 
-			left floating section */
-		section .leftBox .content {
-			color: #fff;
-			background: rgba(0, 0, 0, 0.5);
-			padding: 40px;
-			transition: .5s;
-		}
-
-		/* Styling the hover effect 
-			of left floating section */
-		section .leftBox .content:hover {
-			background: #e91e63;
-		}
-
-		/* Styling the header of left 
-			floating section */
-		section .leftBox .content h1 {
-			margin: 0;
-			padding: 0;
-			font-size: 50px;
-			text-transform: uppercase;
-		}
-
-		/* Styling the paragraph of 
-			left floating section */
-		section .leftBox .content p {
-			margin: 10px 0 0;
-			padding: 0;
-		}
-
-		/* Styling the three events section */
-		section .events {
-			position: relative;
-			width: 50%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.5);
-			float: right;
-			box-sizing: border-box;
-		}
-
-		/* Styling the links of 
-		the events section */
-		section .events ul {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			margin: 0;
-			padding: 40px;
-			box-sizing: border-box;
-		}
-
-		/* Styling the lists of the event section */
-		section .events ul li {
-			list-style: none;
-			background: #fff;
-			box-sizing: border-box;
-			height: 200px;
-			margin: 15px 0;
-		}
-
-		/* Styling the time class of events section */
-		section .events ul li .time {
-			position: relative;
-			padding: 20px;
-			background: #262626;
-			box-sizing: border-box;
-			width: 30%;
-			height: 100%;
-			float: left;
-			text-align: center;
-			transition: .5s;
-		}
-
-		/* Styling the hover effect
-			of events section */
-		section .events ul li:hover .time {
-			background: #e91e63;
-		}
-
-		/* Styling the header of time 
-			class of events section */
-		section .events ul li .time h2 {
-			position: absolute;
-			margin: 0;
-			padding: 0;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			color: #fff;
-			font-size: 60px;
-			line-height: 30px;
-		}
-
-		/* Styling the texts of time 
-		class of events section */
-		section .events ul li .time h2 span {
-			font-size: 30px;
-		}
-
-		/* Styling the details 
-		class of events section */
-		section .events ul li .details {
-			padding: 20px;
-			background: #fff;
-			box-sizing: border-box;
-			width: 70%;
-			height: 100%;
-			float: left;
-		}
-
-		/* Styling the header of the 
-		details class of events section */
-		section .events ul li .details h3 {
-			position: relative;
-			margin: 0;
-			padding: 0;
-			font-size: 22px;
-		}
-
-		/* Styling the lists of details 
-		class of events section */
-		section .events ul li .details p {
-			position: relative;
-			margin: 10px 0 0;
-			padding: 0;
-			font-size: 16px;
-		}
-
-		/* Styling the links of details
-		class of events section */
-		section .events ul li .details a {
-			display: inline-block;
-			text-decoration: none;
-			padding: 10px 15px;
-			border: 1.5px solid #262626;
-			margin-top: 8px;
-			font-size: 18px;
-			transition: .5s;
-		}
-
-		/* Styling the details class's hover effect */
-		section .events ul li .details a:hover {
-			background: #e91e63;
-			color: #fff;
-			border-color: #e91e63;
-		}
+/* Family */
+h1 { 
+    font-family: 'Julius Sans One', sans-serif;
+  }
+  
+  h2 { /* Contact, Skills, Education, About me, Work Experience */
+    font-family: 'Archivo Narrow', sans-serif;
+  }
+  
+  h3 { /* Accountant */
+    font-family: 'Open Sans', sans-serif;
+  }
+  
+  .jobPosition span, 
+  .projectName span {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+  
+  .upperCase {
+    text-transform: uppercase; 
+  }
+  
+  .smallText, 
+  .smallText span, 
+  .smallText p, 
+  .smallText a {
+    font-family: 'Source Sans Pro', sans-serif;
+    text-align: justify;
+  }
+  
+  /* End Family */
+  
+  /* Colors */
+  h1 { 
+    color: #111; 
+  }
+  
+  .leftPanel, 
+  .leftPanel a {
+    color: #bebebe;
+    text-decoration: none;
+  }
+  
+  .leftPanel h2 {
+    color: white;
+  }
+  
+  /* End Colors */
+  
+  /* Sizes */
+  h1 { 
+    font-weight: 300; 
+    font-size: 1.2cm;
+    transform:scale(1,1.15); 
+    margin-bottom: 0.2cm;
+    margin-top: 0.2cm;
+    text-transform: uppercase; 
+  }
+  
+  h2 {
+    margin-top: 0.1cm;
+    margin-bottom: 0.1cm;
+  }
+  
+  .leftPanel, 
+  .leftPanel a {
+    font-size: 0.38cm;
+  }
+  
+  .projectName span, 
+  .jobPosition span {
+    font-size: 0.35cm;
+  }
+  
+  .smallText, 
+  .smallText span, 
+  .smallText p, 
+  .smallText a {
+    font-size: 0.35cm;
+  }
+  
+  .leftPanel .smallText, 
+  .leftPanel .smallText, 
+  .leftPanel .smallText span, 
+  .leftPanel .smallText p, 
+  .smallText a {
+    font-size: 0.45cm;
+  }
+  
+  .contactIcon {
+    width: 0.5cm;
+    text-align: center;
+  }
+  
+  p {
+    margin-top: 0.05cm;
+    margin-bottom: 0.05cm;
+  }
+  /* End Sizes */
+  
+  .bolded {
+    font-weight: bold;
+  }
+  
+  .white {
+    color: white;
+  }
+  /* End Fonts */
+  
+  /* Layout */
+  body {
+    background: rgb(204,204,204); 
+    width: 21cm;
+    height: 29.7cm;
+    margin: 0 auto;
+  }
+  
+  /* Printing */
+  page {
+    background: white;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 0.5cm;
+  }
+  
+  page[size="A4"] {  
+    width: 21cm;
+    height: 29.7cm; 
+  }
+  
+  @page {
+     size: 21cm 29.7cm;
+     padding: 0;
+     margin: 0mm;
+     border: none;
+     border-collapse: collapse;
+  }
+  /* End Printing */
+  
+  .container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .leftPanel {
+    width: 27%;
+    background-color: #484444;
+    padding: 0.7cm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .rightPanel {
+    width: 73%;
+    padding: 0.7cm;
+  }
+  
+  .leftPanel img {
+    width: 4cm;
+    height: 4cm;
+    margin-bottom: 0.7cm;
+    border-radius: 50%;
+    border: 0.15cm solid white;
+    object-fit: cover;
+    object-position: 50% 50%;
+  }
+  
+  .leftPanel .details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .skill {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .bottomLineSeparator {
+    border-bottom: 0.05cm solid white;
+  }
+  
+  .yearsOfExperience {
+    width: 1.6cm;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .alignleft {
+    text-align: left !important;
+    width: 1cm;
+  }
+  
+  .alignright {
+    text-align: right !important;
+    width: 0.6cm;
+    margin-right: 0.1cm
+  }
+  
+  .workExperience>ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .workExperience>ul>li {
+    position: relative;
+    margin: 0;
+    padding-bottom: 0.5cm;
+    padding-left: 0.5cm;
+  }
+  
+  .workExperience>ul>li:before {
+    background-color: #b8abab;
+    width: 0.05cm;
+    content: '';
+    position: absolute;
+    top: 0.1cm;
+    bottom: -0.2cm; /* change this after border removal */
+    left: 0.05cm;
+  }
+  
+  .workExperience>ul>li::after {
+    content: '';
+    position: absolute;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' viewBox='0 0 32 32' focusable='false'%3E%3Ccircle stroke='none' fill='%23484444' cx='16' cy='16' r='10'%3E%3C/circle%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    left: -0.09cm;
+    top: 0;
+    width: 0.35cm;
+    height: 0.35cm;
+  }
+  
+  .jobPosition {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .item {
+    padding-bottom: 0.7cm;
+    padding-top: 0.7cm;
+  }
+  
+  .item h2{
+    margin-top: 0;
+  }
+  
+  .lastParagrafNoMarginBottom {
+    margin-bottom: 0;
+  }
+  
+  .workExperience>ul>li ul {
+    padding-left: 0.5cm;
+    list-style-type: disc;
+  }
+  /*End Layout*/
