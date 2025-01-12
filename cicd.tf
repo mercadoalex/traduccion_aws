@@ -1,3 +1,6 @@
+# Declare the aws_caller_identity data source
+data "aws_caller_identity" "current" {}
+
 # Create a CodeStar connection to GitHub
 resource "aws_codestarconnections_connection" "codestar_connection" {
   name          = "app-dev-codestar" # Name of the CodeStar connection
