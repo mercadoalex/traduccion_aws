@@ -7,16 +7,71 @@ provider "aws" {
 resource "aws_s3_bucket" "english-bucket" {
   bucket        = var.en_bucket_name # Use the bucket name from variables
   force_destroy = true               # Allow Terraform to delete the bucket and its contents
-
 }
 
 # Create an S3 bucket for Spanish content
 resource "aws_s3_bucket" "spanish-bucket" {
   bucket        = var.es_bucket_name # Use the bucket name from variables
   force_destroy = true               # Allow Terraform to delete the bucket and its contents
-
 }
 
+# Disable Block Public Access settings for the English bucket
+resource "aws_s3_bucket_public_access_block" "english_bucket_public_access_block" {
+  bucket                  = aws_s3_bucket.english-bucket.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Disable Block Public Access settings for the Spanish bucket
+resource "aws_s3_bucket_public_access_block" "spanish_bucket_public_access_block" {
+  bucket                  = aws_s3_bucket.spanish-bucket.id
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Attach the policy to the English assets bucket
+resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
+  bucket = aws_s3_bucket.english-bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = "*",
+        Action = [
+          "s3:GetObject"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-english-assets-bucket1/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Attach the policy to the Spanish assets bucket
+resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
+  bucket = aws_s3_bucket.spanish-bucket.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = "*",
+        Action = [
+          "s3:GetObject"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-spanish-assets-bucket1/*"
+        ]
+      }
+    ]
+  })
+}
 
 # Upload HTML file to the English bucket
 resource "aws_s3_object" "en_html_upload" {
@@ -29,8 +84,8 @@ resource "aws_s3_object" "en_html_upload" {
 # Upload CSS file to the English bucket
 resource "aws_s3_object" "en_css_upload" {
   bucket       = aws_s3_bucket.english-bucket.bucket # Reference the English bucket
-  key          = "index.css"                         # Specify the object key with the correct path
-  source       = "cv/index.css"                      # Path to the source file
+  key          = "styles.css"                        # Specify the object key with the correct path
+  source       = "cv/styles.css"                     # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
 
@@ -38,17 +93,18 @@ resource "aws_s3_object" "en_css_upload" {
 resource "aws_s3_object" "es_html_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
   key          = "index.html"                        # Specify the object key with the correct path
-  source       = "cv/index.html"                     # Path to the source file
+  source       = "cv/es-index.html"                  # Path to the source file
   content_type = "text/html"                         # Set the content type
 }
 
 # Upload CSS file to the Spanish bucket
 resource "aws_s3_object" "es_css_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
-  key          = "index.css"                         # Specify the object key with the correct path
-  source       = "cv/index.css"                      # Path to the source file
+  key          = "styles.css"                        # Specify the object key with the correct path
+  source       = "cv/styles.css"                     # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
+
 #AWS CloudFront Origin Access Control (OAC) resource
 #The OAC is used to control access to the origin, in this case, an S3 bucket, ensuring that only CloudFront can access the S3 bucket.
 resource "aws_cloudfront_origin_access_control" "oac" {
