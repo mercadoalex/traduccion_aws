@@ -4,65 +4,6 @@ resource "aws_codestarconnections_connection" "codestar_connection" {
   provider_type = "GitHub"           # Type of provider (GitHub in this case)
 }
 
-# Create a CodePipeline
-resource "aws_codepipeline" "codepipeline" {
-  name     = "tf-test-pipeline"                 # Name of the CodePipeline
-  role_arn = aws_iam_role.codepipeline_role.arn # ARN of the IAM role for CodePipeline
-
-  # Define the artifact store for the pipeline
-  artifact_store {
-    location = aws_s3_bucket.codepipeline_bucket.bucket # S3 bucket for storing artifacts
-    type     = "S3"                                     # Type of artifact store (S3 in this case)
-  }
-
-  # Define the Source stage
-  stage {
-    name = "Source" # Name of the stage
-
-    action {
-      name             = "Source"                   # Name of the action
-      category         = "Source"                   # Category of the action (Source in this case)
-      owner            = "AWS"                      # Owner of the action (AWS in this case)
-      provider         = "CodeStarSourceConnection" # Provider of the action (CodeStarSourceConnection in this case)
-      version          = "1"                        # Version of the action
-      output_artifacts = ["source_output"]          # Output artifacts from the action
-
-      configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.codestar_connection.arn # ARN of the CodeStar connection
-        FullRepositoryId = var.github_repository_url                                  # Full repository ID (GitHub repository URL)
-        BranchName       = "main"                                                     # Branch name to use (main in this case)
-      }
-    }
-  }
-
-  # Define the Build stage
-  stage {
-    name = "Build" # Name of the stage
-
-    action {
-      name             = "Build"                   # Name of the action
-      category         = "Build"                   # Category of the action (Build in this case)
-      owner            = "AWS"                     # Owner of the action (AWS in this case)
-      provider         = "CodeBuild"               # Provider of the action (CodeBuild in this case)
-      version          = "1"                       # Version of the action
-      input_artifacts  = ["source_output"]         # Input artifacts for the action
-      output_artifacts = ["build_output"]          # Output artifacts from the action
-
-      configuration = {
-        ProjectName = aws_codebuild_project.codebuild_project.name # Name of the CodeBuild project
-      }
-    }
-  }
-
-  # Additional stages (e.g., Deploy) can be defined here
-}
-
-# Create an S3 bucket for CodePipeline artifacts
-resource "aws_s3_bucket" "codepipeline_bucket" {
-  bucket        = var.codepipeline_bucket_name
-  force_destroy = true # Allow Terraform to delete the bucket and its contents
-}
-
 # IAM role for CodePipeline with necessary permissions to use CodeStar connection
 resource "aws_iam_role" "codepipeline_role" {
   name = "codepipeline_role"
@@ -109,47 +50,6 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
       }
     ]
   })
-}
-
-# IAM policy document for CodePipeline
-data "aws_iam_policy_document" "codepipeline_policy" {
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "s3:GetObject",
-      "s3:GetObjectVersion",
-      "s3:GetBucketVersioning",
-      "s3:PutObjectAcl",
-      "s3:PutObject",
-    ]
-
-    resources = [
-      aws_s3_bucket.codepipeline_bucket.arn,
-      "${aws_s3_bucket.codepipeline_bucket.arn}/*"
-    ]
-  }
-
-  statement {
-    actions = [
-      "codestar-connections:UseConnection"
-    ]
-
-    resources = [
-      "*",
-    ]
-  }
-
-  statement {
-    effect = "Allow"
-
-    actions = [
-      "codebuild:BatchGetBuilds",
-      "codebuild:StartBuild",
-    ]
-
-    resources = ["*"]
-  }
 }
 
 # Create a CodeBuild project
@@ -237,6 +137,175 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "logs:PutLogEvents"
         ],
         Resource = "*"
+      }
+    ]
+  })
+}
+
+# Create a CodePipeline
+resource "aws_codepipeline" "codepipeline" {
+  name     = "tf-test-pipeline"                 # Name of the CodePipeline
+  role_arn = aws_iam_role.codepipeline_role.arn # ARN of the IAM role for CodePipeline
+
+  # Define the artifact store for the pipeline
+  artifact_store {
+    location = aws_s3_bucket.codepipeline_bucket.bucket # S3 bucket for storing artifacts
+    type     = "S3"                                     # Type of artifact store (S3 in this case)
+  }
+
+  # Define the Source stage
+  stage {
+    name = "Source" # Name of the stage
+
+    action {
+      name             = "Source"                   # Name of the action
+      category         = "Source"                   # Category of the action (Source in this case)
+      owner            = "AWS"                      # Owner of the action (AWS in this case)
+      provider         = "CodeStarSourceConnection" # Provider of the action (CodeStarSourceConnection in this case)
+      version          = "1"                        # Version of the action
+      output_artifacts = ["source_output"]          # Output artifacts from the action
+
+      configuration = {
+        ConnectionArn    = aws_codestarconnections_connection.codestar_connection.arn # ARN of the CodeStar connection
+        FullRepositoryId = var.github_repository_url                                  # Full repository ID (GitHub repository URL)
+        BranchName       = "main"                                                     # Branch name to use (main in this case)
+      }
+    }
+  }
+
+  # Define the Build stage
+  stage {
+    name = "Build" # Name of the stage
+
+    action {
+      name             = "Build"                   # Name of the action
+      category         = "Build"                   # Category of the action (Build in this case)
+      owner            = "AWS"                     # Owner of the action (AWS in this case)
+      provider         = "CodeBuild"               # Provider of the action (CodeBuild in this case)
+      version          = "1"                       # Version of the action
+      input_artifacts  = ["source_output"]         # Input artifacts for the action
+      output_artifacts = ["build_output"]          # Output artifacts from the action
+
+      configuration = {
+        ProjectName = aws_codebuild_project.codebuild_project.name # Name of the CodeBuild project
+      }
+    }
+  }
+
+  # Additional stages (e.g., Deploy) can be defined here
+}
+
+# Create an S3 bucket for CodePipeline artifacts
+resource "aws_s3_bucket" "codepipeline_bucket" {
+  bucket        = var.codepipeline_bucket_name
+  force_destroy = true # Allow Terraform to delete the bucket and its contents
+}
+
+# IAM policy document for CodePipeline
+data "aws_iam_policy_document" "codepipeline_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:GetBucketVersioning",
+      "s3:PutObjectAcl",
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.bucket}",
+      "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.bucket}/*"
+    ]
+  }
+}
+
+# Attach the policy to the S3 bucket
+resource "aws_s3_bucket_policy" "codepipeline_bucket_policy" {
+  bucket = aws_s3_bucket.codepipeline_bucket.id
+  policy = data.aws_iam_policy_document.codepipeline_policy.json
+}
+
+# Attach the policy to the English assets bucket
+resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
+  bucket = "my-english-assets-bucket"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:ListBucketVersions",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-english-assets-bucket",
+          "arn:aws:s3:::my-english-assets-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Attach the policy to the Spanish assets bucket
+resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
+  bucket = "my-spanish-assets-bucket"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:ListBucketVersions",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-spanish-assets-bucket",
+          "arn:aws:s3:::my-spanish-assets-bucket/*"
+        ]
+      }
+    ]
+  })
+}
+
+# Attach the policy to the CodePipeline artifacts bucket
+resource "aws_s3_bucket_policy" "codepipeline_artifacts_bucket_policy" {
+  bucket = "my-codepipeline-us-east-1-bucket1"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:ListBucketVersions",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion"
+        ],
+        Resource = [
+          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1",
+          "arn:aws:s3:::my-codepipeline-us-east-1-bucket1/*"
+        ]
       }
     ]
   })
