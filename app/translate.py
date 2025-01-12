@@ -1,5 +1,6 @@
 import boto3  # AWS SDK for Python. It enables Python developers to create, configure, and manage AWS services.
 import argparse  # standard library module in Python for parsing command-line arguments
+import os  # standard library module for interacting with the operating system
 
 # Initialize the boto3 client for Translate
 translate = boto3.client('translate')
@@ -42,6 +43,11 @@ def main():
     translated_text = ""
     for chunk in text_chunks:
         translated_text += translate_text(chunk, args.source_language, args.target_language)
+
+    # Ensure the output directory exists
+    output_dir = os.path.dirname(f"translated-{args.file_path}")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     # Write the translated text to a new file
     output_file_path = f"translated-{args.file_path}"
