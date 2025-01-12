@@ -1,10 +1,29 @@
 version: 0.2  # Specifies the version of the buildspec file format
 
 phases:
+  install:
+    runtime-versions:
+      python: 3.8  # Specify the Python version to use
+    commands:
+      - echo No dependencies to install  # Print a message indicating no dependencies to install
+
+  pre_build:
+    commands:
+      - echo Pre-build phase  # Print a message indicating the pre-build phase
+
   build:
     commands:
       - ls  # List the files in the current directory for debugging purposes
       - aws s3 sync . s3://my-english-assets-bucket1  # Sync the current directory to the English S3 bucket
       - aws s3 sync . s3://my-spanish-assets-bucket1  # Sync the current directory to the Spanish S3 bucket
-      - python translate.py en es index.html  # Run the translation script to translate index.html from English to Spanish
+      - python app/translate.py en es index.html  # Run the translation script to translate index.html from English to Spanish
       - aws s3 cp es-index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
+
+  post_build:
+    commands:
+      - echo Post-build phase  # Print a message indicating the post-build phase
+
+artifacts:
+  files:
+    - '**/*'  # Include all files in the build output
+  discard-paths: yes  # Discard the directory structure of the build output

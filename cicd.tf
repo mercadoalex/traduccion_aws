@@ -227,7 +227,29 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 # Attach the policy to the S3 bucket
 resource "aws_s3_bucket_policy" "codepipeline_bucket_policy" {
   bucket = aws_s3_bucket.codepipeline_bucket.id
-  policy = data.aws_iam_policy_document.codepipeline_policy.json
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
+        },
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:ListBucket",
+          "s3:ListBucketVersions",
+          "s3:GetBucketLocation",
+          "s3:GetObjectVersion"
+        ],
+        Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.codepipeline_bucket.bucket}/*"
+        ]
+      }
+    ]
+  })
 }
 
 # Attach the policy to the English assets bucket
