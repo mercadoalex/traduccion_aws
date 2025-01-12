@@ -61,8 +61,8 @@ resource "aws_s3_object" "es_html_upload" {
 # Upload CSS file to the Spanish bucket
 resource "aws_s3_object" "es_css_upload" {
   bucket       = aws_s3_bucket.spanish-bucket.bucket # Reference the Spanish bucket
-  key          = "styles.css"                        # Specify the object key with the correct path
-  source       = "cv/styles.css"                     # Path to the source file
+  key          = "index.css"                        # Specify the object key with the correct path
+  source       = "cv/index.css"                     # Path to the source file
   content_type = "text/css"                          # Set the content type
 }
 
