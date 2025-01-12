@@ -121,10 +121,10 @@ resource "aws_iam_role_policy" "codebuild_policy" {
           "s3:GetObjectVersion"
         ],
         Resource = [
-          "arn:aws:s3:::my-english-assets-bucket",
-          "arn:aws:s3:::my-english-assets-bucket/*",
-          "arn:aws:s3:::my-spanish-assets-bucket",
-          "arn:aws:s3:::my-spanish-assets-bucket/*",
+          "arn:aws:s3:::my-english-assets-bucket1",
+          "arn:aws:s3:::my-english-assets-bucket1/*",
+          "arn:aws:s3:::my-spanish-assets-bucket1",
+          "arn:aws:s3:::my-spanish-assets-bucket1/*",
           "arn:aws:s3:::my-codepipeline-us-east-1-bucket1",
           "arn:aws:s3:::my-codepipeline-us-east-1-bucket1/*"
         ]
@@ -229,14 +229,14 @@ resource "aws_s3_bucket_policy" "codepipeline_bucket_policy" {
 
 # Attach the policy to the English assets bucket
 resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
-  bucket = "my-english-assets-bucket"
+  bucket = "my-english-assets-bucket1"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
         Effect = "Allow",
         Principal = {
-          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
         },
         Action = [
           "s3:GetObject",
@@ -247,8 +247,8 @@ resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
           "s3:GetObjectVersion"
         ],
         Resource = [
-          "arn:aws:s3:::my-english-assets-bucket",
-          "arn:aws:s3:::my-english-assets-bucket/*"
+          "arn:aws:s3:::my-english-assets-bucket1",
+          "arn:aws:s3:::my-english-assets-bucket1/*"
         ]
       }
     ]
@@ -257,14 +257,14 @@ resource "aws_s3_bucket_policy" "english_assets_bucket_policy" {
 
 # Attach the policy to the Spanish assets bucket
 resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
-  bucket = "my-spanish-assets-bucket"
+  bucket = "my-spanish-assets-bucket1"
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
         Effect = "Allow",
         Principal = {
-          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
         },
         Action = [
           "s3:GetObject",
@@ -275,8 +275,8 @@ resource "aws_s3_bucket_policy" "spanish_assets_bucket_policy" {
           "s3:GetObjectVersion"
         ],
         Resource = [
-          "arn:aws:s3:::my-spanish-assets-bucket",
-          "arn:aws:s3:::my-spanish-assets-bucket/*"
+          "arn:aws:s3:::my-spanish-assets-bucket1",
+          "arn:aws:s3:::my-spanish-assets-bucket1/*"
         ]
       }
     ]
@@ -292,7 +292,7 @@ resource "aws_s3_bucket_policy" "codepipeline_artifacts_bucket_policy" {
       {
         Effect = "Allow",
         Principal = {
-          AWS = "arn:aws:iam::<account-id>:role/codebuild_service_role"
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/codebuild_service_role"
         },
         Action = [
           "s3:GetObject",
