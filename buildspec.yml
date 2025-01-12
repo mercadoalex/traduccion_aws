@@ -5,7 +5,8 @@ phases:
     runtime-versions:
       python: 3.8  # Specify the Python version to use
     commands:
-      - echo No dependencies to install  # Print a message indicating no dependencies to install
+      - echo Installing dependencies  # Print a message indicating the installation of dependencies
+      - pip install -r requirements.txt  # Install dependencies listed in requirements.txt
 
   pre_build:
     commands:
@@ -14,10 +15,8 @@ phases:
   build:
     commands:
       - ls  # List the files in the current directory for debugging purposes
-      - aws s3 sync . s3://my-english-assets-bucket1  # Sync the current directory to the English S3 bucket
-      - aws s3 sync . s3://my-spanish-assets-bucket1  # Sync the current directory to the Spanish S3 bucket
-      - python app/translate.py en es index.html  # Run the translation script to translate index.html from English to Spanish
-      - aws s3 cp es-index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
+      - python app/translate.py en es app/index.html  # Run the translation script to translate index.html from English to Spanish
+      - aws s3 cp app/es-index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
 
   post_build:
     commands:
