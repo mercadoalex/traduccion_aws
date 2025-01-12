@@ -15,13 +15,8 @@ resource "aws_s3_bucket" "spanish-bucket" {
   bucket        = var.es_bucket_name # Use the bucket name from variables
   force_destroy = true               # Allow Terraform to delete the bucket and its contents
 
-  # Disable Block Public Access settings
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
-
 }
+
 
 # Upload HTML file to the English bucket
 resource "aws_s3_object" "en_html_upload" {
