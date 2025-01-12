@@ -17,7 +17,9 @@ phases:
     commands:
       - ls app  # List the files in the app directory for debugging purposes
       - python app/translate.py en es app/index.html  # Run the translation script to translate index.html from English to Spanish
-      - aws s3 cp translated-app/index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
+      - aws s3 cp app/es-index.html s3://my-spanish-assets-bucket1/index.html  # Upload the translated Spanish index.html to the Spanish S3 bucket
+      - aws s3 cp app/avatar.png s3://my-english-assets-bucket1/avatar.png  # Upload avatar.png to the English S3 bucket
+      - aws s3 cp app/avatar.png s3://my-spanish-assets-bucket1/avatar.png  # Upload avatar.png to the Spanish S3 bucket
 
   post_build:
     commands:

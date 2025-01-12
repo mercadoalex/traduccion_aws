@@ -337,3 +337,19 @@ resource "aws_s3_bucket_policy" "codepipeline_artifacts_bucket_policy" {
     ]
   })
 }
+
+# Upload avatar.png to the English bucket
+resource "aws_s3_object" "en_avatar_upload" {
+  bucket       = "my-english-assets-bucket1" # Reference the English bucket
+  key          = "avatar.png"                # Specify the object key with the correct path
+  source       = "app/avatar.png"            # Path to the source file
+  content_type = "image/png"                 # Set the content type
+}
+
+# Upload avatar.png to the Spanish bucket
+resource "aws_s3_object" "es_avatar_upload" {
+  bucket       = "my-spanish-assets-bucket1" # Reference the Spanish bucket
+  key          = "avatar.png"                # Specify the object key with the correct path
+  source       = "app/avatar.png"            # Path to the source file
+  content_type = "image/png"                 # Set the content type
+}
