@@ -1,35 +1,37 @@
-import boto3 # type: ignore #AWS SDK for Python. It enables Python developers to create, configure, and manage AWS services.
-import argparse # standard library module in Python for parsing command-line arguments
+import boto3  # AWS SDK for Python. It enables Python developers to create, configure, and manage AWS services.
+import argparse  # standard library module in Python for parsing command-line arguments
 
-# Set up argument parser
-parser = argparse.ArgumentParser()
-parser.add_argument("SourceLanguageCode") # Source language code argument
-parser.add_argument("TargetLanguageCode") # Target language code argument
-parser.add_argument("SourceFile")  # Source file argument
-args = parser.parse_args()
-
-# Initialize AWS Translate client
+# Initialize the boto3 client for Translate
 translate = boto3.client('translate')
 
-localFile = args.SourceFile
-file = open(localFile, "rb")  #opens the file specified by localFile in binary read mode ("rb")
-data = file.read()
-file.close()
+def translate_text(text, source_language, target_language):
+    result = translate.translate_text(
+        Text=text,
+        SourceLanguageCode=source_language,
+        TargetLanguageCode=target_language
+    )
+    return result['TranslatedText']
 
-# Read the source file
-result = translate.translate_document(
-    Document={
-            "Content": data,
-            "ContentType": "text/html"
-        },
-    SourceLanguageCode=args.SourceLanguageCode,
-    TargetLanguageCode=args.TargetLanguageCode
-)
-# Save the translated document if translation is successful
-if "TranslatedDocument" in result:
-    fileName = localFile.split("/")[-1]
-    tmpfile = f"{args.TargetLanguageCode}-{fileName}"
-    with open(tmpfile,  'w') as f:
-        f.write(result["TranslatedDocument"]["Content"].decode('utf-8'))
-        
-    print("Translated document ", tmpfile)
+def main():
+    parser = argparse.ArgumentParser(description='Translate a document.')
+    parser.add_argument('source_language', type=str, help='Source language code')
+    parser.add_argument('target_language', type=str, help='Target language code')
+    parser.add_argument('file_path', type=str, help='Path to the file to translate')
+    args = parser.parse_args()
+
+    # Read the content of the file
+    with open(args.file_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+
+    # Translate the text
+    translated_text = translate_text(text, args.source_language, args.target_language)
+
+    # Write the translated text to a new file
+    output_file_path = f"translated-{args.file_path}"
+    with open(output_file_path, 'w', encoding='utf-8') as output_file:
+        output_file.write(translated_text)
+
+    print(f"Translated text written to {output_file_path}")
+
+if __name__ == "__main__":
+    main()
